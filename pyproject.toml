@@ -4,13 +4,19 @@ version = "0.1.0"
 description = "AI copilot for FMCG sales reps: SQL, forecasting, RAG, agent, API and MCP"
 requires-python = ">=3.11"
 dependencies = [
+    "chromadb>=1.5.9",
     "joblib>=1.6.0",
     "lightgbm>=4.7.0",
+    "mcp>=2.3.0",
     "mlflow>=3.18.0",
     "numpy",
+    "openai>=3.52.0",
     "pandas",
+    "pydantic>=2.14.3",
+    "python-dotenv>=1.2.4",
     "scikit-learn>=1.9.1",
     "sqlalchemy>=2",
+    "sqlglot>=30.32.0",
 ]
 
 [dependency-groups]

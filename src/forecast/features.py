@@ -65,9 +65,22 @@ LEFT JOIN promotions p ON p.promo_id = s.promo_id
 """
 
 
-def load_panel(engine: sa.Engine) -> pd.DataFrame:
-    """Load the weekly sales panel (one row per outlet x SKU x week) from the database."""
-    return pd.read_sql(PANEL_SQL, engine, parse_dates=["week_start"])
+def load_panel(
+    engine: sa.Engine, outlet_id: str | None = None, up_to: pd.Timestamp | None = None
+) -> pd.DataFrame:
+    """Load the weekly sales panel (one row per outlet x SKU x week) from the database.
+
+    Optionally only one outlet, and only weeks up to (and including) `up_to`.
+    """
+    conditions, params = [], {}
+    if outlet_id is not None:
+        conditions.append("s.outlet_id = :outlet_id")
+        params["outlet_id"] = outlet_id
+    if up_to is not None:
+        conditions.append("s.week_start <= :up_to")
+        params["up_to"] = up_to.date().isoformat()
+    query = PANEL_SQL + (" WHERE " + " AND ".join(conditions) if conditions else "")
+    return pd.read_sql(sa.text(query), engine, params=params, parse_dates=["week_start"])
 
 
 def ramadan_share(week_start: pd.Series) -> np.ndarray:
