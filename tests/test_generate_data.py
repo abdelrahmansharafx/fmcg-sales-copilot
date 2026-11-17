@@ -1,6 +1,7 @@
 """Sanity checks for the synthetic data generator."""
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from scripts import generate_data as gd
@@ -70,3 +71,13 @@ def test_expected_units_are_the_noise_free_mean(world):
     # Noise averages out; stock-outs remove a few %, so actual units sit a bit below the mean.
     ratio = sales["units"].sum() / sales["expected_units"].sum()
     assert 0.9 < ratio < 1.02
+
+
+def test_true_demand_file_is_written_even_if_the_folder_does_not_exist(tmp_path, world):
+    """A Docker build starts without data/: the generator must create it (this once crashed)."""
+    _, _, _, sales = world
+    target = tmp_path / "does" / "not" / "exist" / gd.TRUE_DEMAND_FILE
+    gd.write_true_demand(sales.head(50), target)
+    saved = pd.read_csv(target)
+    assert list(saved.columns) == ["week_start", "outlet_id", "sku_id", "expected_units"]
+    assert len(saved) == 50

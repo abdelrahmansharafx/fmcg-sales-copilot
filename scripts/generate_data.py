@@ -443,6 +443,13 @@ def print_summary(engine: sa.Engine) -> None:
             print(pd.read_sql(sa.text(sql), conn).to_string(index=False))
 
 
+def write_true_demand(sales: pd.DataFrame, path: Path) -> None:
+    """Save the noise-free expected demand next to the database (creating the folder if needed)."""
+    path.parent.mkdir(parents=True, exist_ok=True)  # a fresh checkout / Docker build has no data/
+    key = ["week_start", "outlet_id", "sku_id"]
+    sales[[*key, "expected_units"]].to_csv(path, index=False)
+
+
 def write_samples(out_dir: Path, seed: int, n_rows: int = 200, **tables: pd.DataFrame) -> None:
     """Write a small CSV preview of each table (committed to git, so the repo is browsable)."""
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -468,9 +475,7 @@ def main() -> None:
 
     # The simulator's hidden truth lives in its own file, so it can never leak into the
     # database that the SQL tool (and therefore the LLM) can query.
-    true_path = args.db.parent / TRUE_DEMAND_FILE
-    key = ["week_start", "outlet_id", "sku_id"]
-    sales[[*key, "expected_units"]].to_csv(true_path, index=False)
+    write_true_demand(sales, args.db.parent / TRUE_DEMAND_FILE)
     sales = sales.drop(columns="expected_units")
 
     engine = write_db(args.db, outlets=outlets, skus=skus, promotions=promos, sales_weekly=sales)
