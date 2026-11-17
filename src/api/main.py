@@ -2,7 +2,8 @@
 
     uv run python -m src.api          # then open http://127.0.0.1:8000/docs
 
-Endpoints (all but /health need the X-API-Key header):
+Endpoints (all but / and /health need the X-API-Key header):
+    GET  /                    the chat page (src/api/static/index.html), public
     POST /ask                 natural-language question -> the LangGraph agent (5 tools)
     POST /forecast            demand forecast for one outlet x SKU
     GET  /recommend/{outlet}  next week's order recommendation
@@ -41,6 +42,7 @@ from src.api.schemas import (
     ToolCallInfo,
     UsageInfo,
 )
+from src.api.ui import router as ui_router
 from src.errors import NotFoundError, NotReadyError, ToolError
 from src.tools import forecast_demand, recommend_order
 from src.tools.schemas import ForecastResult, OrderRecommendation
@@ -181,6 +183,7 @@ def create_app() -> FastAPI:
         "order recommendations, promotion impact and policy search. All data is synthetic.",
         lifespan=lifespan,
     )
+    app.include_router(ui_router)  # the chat page at "/"
     app.include_router(router)
 
     @app.get("/health", response_model=HealthResponse, tags=["ops"], summary="Readiness")

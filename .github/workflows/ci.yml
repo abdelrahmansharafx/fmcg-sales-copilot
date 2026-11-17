@@ -99,6 +99,9 @@ jobs:
             -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01"}')" = "401"
           curl -sf -X POST localhost:8000/forecast -H 'X-API-Key: ci-smoke-key-0123456789' \
             -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01","weeks":2}' | head -c 300; echo
+          # the chat page is served at / with its content-security policy
+          curl -sf localhost:8000/ | grep -q "FMCG Sales Copilot"
+          curl -s -D - -o /dev/null localhost:8000/ | grep -qi "^content-security-policy: default-src 'none'"
           # the process must not run as root
           test "$(docker exec smoke id -u)" != "0"
           docker logs smoke | tail -5
@@ -163,6 +166,8 @@ jobs:
           done
           cat /tmp/health.json; echo
           test "$code" = "200"
+          # the chat page is reachable (it is public; it holds no data)
+          curl -sf "https://$fqdn/" | grep -q "FMCG Sales Copilot"
           # authentication must be on in production
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST "https://$fqdn/forecast" \
             -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01"}')" = "401"

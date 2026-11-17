@@ -7,7 +7,21 @@ python3 -c "import secrets; print('API_KEY=' + secrets.token_urlsafe(32))" >> .e
 uv run python -m src.api                      # http://127.0.0.1:8000  (interactive docs at /docs)
 ```
 
-All endpoints except `/health` need the header `X-API-Key: <your key>`.
+All endpoints except `/health` and the chat page need the header `X-API-Key: <your key>`.
+
+## The chat page
+
+Open `http://127.0.0.1:8000/` (or your deployed URL) for a simple chat UI served by the same app: paste
+your API key once (it is kept in your browser's localStorage and sent only in the `X-API-Key` header to
+this server), then ask a question or click one of the five examples. Each answer shows the tools used,
+the latency and the estimated cost. If the server has been idle and is waking up, the page tells you.
+
+- The page itself is public and contains no data; only `/ask` needs the key.
+- A content-security-policy (`connect-src 'self'`) stops the page from sending anything, including the
+  key, to any other site, and answers are rendered as plain text, never as HTML.
+- Limitation: if the app has scaled to zero, the *first load of the page* waits for the container to
+  start (about 45 s) before anything appears, because the page is served by that same container. The
+  "waking up" message covers requests made after the page is open.
 
 ```bash
 KEY=...   # the value of API_KEY
