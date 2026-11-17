@@ -6,6 +6,8 @@ requires-python = ">=3.11"
 dependencies = [
     "chromadb>=1.5.9",
     "joblib>=1.6.0",
+    "langchain-openai>=1.8.0",
+    "langgraph>=1.2.22",
     "lightgbm>=4.7.0",
     "mcp>=2.3.0",
     "mlflow>=3.18.0",
@@ -32,3 +34,5 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["live: calls the real LLM (costs tokens); run with `pytest -m live`"]
+addopts = "-m 'not live'"

@@ -28,7 +28,7 @@ from src.errors import ToolError
 from src.tools.schemas import PolicyPassage, PolicySearchResult
 
 MAX_CHUNK_CHARS = 900
-TOP_K = 4
+TOP_K = 6
 
 
 @dataclass
@@ -111,11 +111,12 @@ def search_policies(question: str, top_k: int = TOP_K) -> PolicySearchResult:
     Use this for questions about rules and policies: promotion rules (discount levels,
     duration, approvals), trade terms by channel (payment terms, rebates, delivery, safety
     stock), pricing guidelines and price-increase history, and new-outlet onboarding. Base
-    the answer only on the returned passages and cite the source file.
+    the answer only on the returned passages and cite the source file. Ask ONE focused
+    question per call: a question mixing two topics retrieves worse, so call it twice instead.
 
     Args:
         question: The policy question in plain English.
-        top_k: How many passages to return (default 4).
+        top_k: How many passages to return (default 6).
     """
     if not question.strip():
         raise ToolError("The question is empty.")

@@ -15,6 +15,12 @@ def sku_names() -> dict[str, str]:
         return {row[0]: row[1] for row in conn.execute(sa.text(query))}
 
 
+def brand_names() -> list[str]:
+    """The brands in the catalogue, e.g. ['Coca-Cola', 'Dasani', ...]."""
+    with get_engine().connect() as conn:
+        return [r[0] for r in conn.execute(sa.text("SELECT DISTINCT brand FROM skus ORDER BY 1"))]
+
+
 def require_sku(sku_id: str) -> str:
     """Return the SKU's name or raise a helpful error."""
     names = sku_names()
