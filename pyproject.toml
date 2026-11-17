@@ -5,6 +5,7 @@ description = "AI copilot for FMCG sales reps: SQL, forecasting, RAG, agent, API
 requires-python = ">=3.11"
 dependencies = [
     "chromadb>=1.5.9",
+    "fastapi>=0.163.1",
     "joblib>=1.6.0",
     "langchain-openai>=1.8.0",
     "langgraph>=1.2.22",
@@ -19,6 +20,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "sqlalchemy>=2",
     "sqlglot>=30.32.0",
+    "uvicorn>=0.54.0",
 ]
 
 [dependency-groups]
@@ -30,6 +32,10 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI declares dependencies as argument defaults; these calls are safe.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Security", "fastapi.Path", "fastapi.Query"]
 
 [tool.ruff.lint.per-file-ignores]
 "evals/report.py" = ["E501"]  # long lines of report prose

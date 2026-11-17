@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")  # local development only; in Azure these are app settings
+os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")  # Chroma: no usage pings from servers
 
 # --- Data and artefacts ----------------------------------------------------------------------
 # SQLite for now; the SQL tool and loaders only need this URL (the tool's read-only
