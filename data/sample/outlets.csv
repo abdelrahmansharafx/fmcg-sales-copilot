@@ -1,0 +1,201 @@
+outlet_id,outlet_name,channel,region,opened_date
+O001,Alexandria Hyper 001,hypermarket,Alexandria,2023-04-26
+O003,Upper Egypt Hyper 003,hypermarket,Upper Egypt,2023-11-23
+O006,Cairo Cafe 006,restaurant_cafe,Cairo,2024-06-03
+O007,Cairo Market 007,supermarket,Cairo,2021-08-16
+O008,Giza Kiosk 008,kiosk,Giza,2024-12-09
+O010,Alexandria Cafe 010,restaurant_cafe,Alexandria,2019-08-12
+O011,Upper Egypt Kiosk 011,kiosk,Upper Egypt,2020-09-20
+O012,Upper Egypt Market 012,supermarket,Upper Egypt,2019-07-23
+O013,Alexandria Hyper 013,hypermarket,Alexandria,2017-03-17
+O016,Giza Cafe 016,restaurant_cafe,Giza,2022-11-06
+O017,Delta Kiosk 017,kiosk,Delta,2020-12-29
+O018,Cairo Kiosk 018,kiosk,Cairo,2022-11-24
+O019,Cairo Cafe 019,restaurant_cafe,Cairo,2022-06-08
+O020,Delta Kiosk 020,kiosk,Delta,2016-03-05
+O023,Cairo Market 023,supermarket,Cairo,2017-02-19
+O025,Cairo Cafe 025,restaurant_cafe,Cairo,2022-09-23
+O026,Cairo Cafe 026,restaurant_cafe,Cairo,2022-08-04
+O027,Giza Hyper 027,hypermarket,Giza,2020-11-21
+O028,Delta Kiosk 028,kiosk,Delta,2019-05-31
+O029,Giza Kiosk 029,kiosk,Giza,2016-02-12
+O030,Cairo Kiosk 030,kiosk,Cairo,2024-07-29
+O031,Cairo Market 031,supermarket,Cairo,2022-08-01
+O032,Alexandria Market 032,supermarket,Alexandria,2021-11-11
+O034,Cairo Kiosk 034,kiosk,Cairo,2023-09-04
+O036,Giza Kiosk 036,kiosk,Giza,2022-12-14
+O037,Cairo Kiosk 037,kiosk,Cairo,2022-08-23
+O038,Giza Kiosk 038,kiosk,Giza,2016-06-18
+O039,Delta Kiosk 039,kiosk,Delta,2023-11-28
+O042,Cairo Kiosk 042,kiosk,Cairo,2018-12-22
+O043,Upper Egypt Market 043,supermarket,Upper Egypt,2023-05-03
+O046,Cairo Cafe 046,restaurant_cafe,Cairo,2020-08-30
+O047,Giza Kiosk 047,kiosk,Giza,2019-08-15
+O052,Upper Egypt Cafe 052,restaurant_cafe,Upper Egypt,2015-11-18
+O056,Delta Kiosk 056,kiosk,Delta,2017-11-21
+O057,Alexandria Kiosk 057,kiosk,Alexandria,2020-11-26
+O058,Cairo Kiosk 058,kiosk,Cairo,2020-02-09
+O060,Cairo Cafe 060,restaurant_cafe,Cairo,2022-09-04
+O061,Upper Egypt Market 061,supermarket,Upper Egypt,2017-03-07
+O062,Upper Egypt Kiosk 062,kiosk,Upper Egypt,2016-06-07
+O064,Cairo Cafe 064,restaurant_cafe,Cairo,2021-02-22
+O066,Delta Cafe 066,restaurant_cafe,Delta,2023-07-07
+O067,Cairo Kiosk 067,kiosk,Cairo,2016-05-05
+O068,Cairo Kiosk 068,kiosk,Cairo,2021-02-19
+O069,Alexandria Kiosk 069,kiosk,Alexandria,2023-06-16
+O070,Alexandria Kiosk 070,kiosk,Alexandria,2017-06-17
+O073,Upper Egypt Kiosk 073,kiosk,Upper Egypt,2023-06-25
+O074,Giza Hyper 074,hypermarket,Giza,2017-10-25
+O075,Upper Egypt Market 075,supermarket,Upper Egypt,2018-09-27
+O076,Cairo Kiosk 076,kiosk,Cairo,2017-06-19
+O077,Delta Kiosk 077,kiosk,Delta,2017-03-11
+O078,Cairo Hyper 078,hypermarket,Cairo,2022-03-13
+O079,Giza Market 079,supermarket,Giza,2022-03-17
+O080,Cairo Market 080,supermarket,Cairo,2016-05-29
+O083,Cairo Kiosk 083,kiosk,Cairo,2021-08-02
+O084,Delta Market 084,supermarket,Delta,2018-09-22
+O085,Delta Cafe 085,restaurant_cafe,Delta,2024-05-27
+O086,Delta Kiosk 086,kiosk,Delta,2023-11-26
+O087,Alexandria Market 087,supermarket,Alexandria,2019-06-05
+O090,Giza Cafe 090,restaurant_cafe,Giza,2025-08-25
+O091,Cairo Kiosk 091,kiosk,Cairo,2016-10-11
+O093,Delta Kiosk 093,kiosk,Delta,2020-09-08
+O094,Cairo Kiosk 094,kiosk,Cairo,2020-03-11
+O096,Upper Egypt Market 096,supermarket,Upper Egypt,2022-11-14
+O097,Upper Egypt Kiosk 097,kiosk,Upper Egypt,2020-05-22
+O098,Alexandria Kiosk 098,kiosk,Alexandria,2022-09-06
+O099,Giza Kiosk 099,kiosk,Giza,2017-07-07
+O101,Alexandria Market 101,supermarket,Alexandria,2019-11-18
+O102,Alexandria Market 102,supermarket,Alexandria,2020-09-22
+O105,Delta Kiosk 105,kiosk,Delta,2018-08-27
+O108,Upper Egypt Market 108,supermarket,Upper Egypt,2018-01-06
+O109,Delta Kiosk 109,kiosk,Delta,2018-01-25
+O110,Delta Market 110,supermarket,Delta,2020-03-03
+O112,Giza Hyper 112,hypermarket,Giza,2018-07-21
+O113,Giza Kiosk 113,kiosk,Giza,2018-07-27
+O114,Upper Egypt Cafe 114,restaurant_cafe,Upper Egypt,2019-01-16
+O115,Alexandria Cafe 115,restaurant_cafe,Alexandria,2024-12-23
+O116,Delta Market 116,supermarket,Delta,2020-01-28
+O117,Alexandria Kiosk 117,kiosk,Alexandria,2018-12-05
+O118,Upper Egypt Kiosk 118,kiosk,Upper Egypt,2016-03-12
+O119,Delta Hyper 119,hypermarket,Delta,2019-08-25
+O120,Cairo Market 120,supermarket,Cairo,2021-02-18
+O121,Cairo Hyper 121,hypermarket,Cairo,2019-05-27
+O125,Giza Kiosk 125,kiosk,Giza,2015-11-26
+O126,Giza Market 126,supermarket,Giza,2017-01-15
+O127,Cairo Kiosk 127,kiosk,Cairo,2019-03-05
+O128,Delta Cafe 128,restaurant_cafe,Delta,2024-04-22
+O130,Upper Egypt Market 130,supermarket,Upper Egypt,2024-06-17
+O133,Delta Cafe 133,restaurant_cafe,Delta,2017-11-07
+O137,Giza Market 137,supermarket,Giza,2020-03-27
+O138,Upper Egypt Cafe 138,restaurant_cafe,Upper Egypt,2024-09-23
+O140,Upper Egypt Cafe 140,restaurant_cafe,Upper Egypt,2018-07-21
+O141,Upper Egypt Kiosk 141,kiosk,Upper Egypt,2022-07-09
+O142,Giza Kiosk 142,kiosk,Giza,2025-07-14
+O143,Cairo Cafe 143,restaurant_cafe,Cairo,2020-12-25
+O144,Delta Kiosk 144,kiosk,Delta,2016-03-19
+O145,Delta Market 145,supermarket,Delta,2025-02-17
+O147,Alexandria Hyper 147,hypermarket,Alexandria,2017-12-11
+O148,Delta Kiosk 148,kiosk,Delta,2017-11-30
+O149,Giza Cafe 149,restaurant_cafe,Giza,2020-09-18
+O151,Alexandria Hyper 151,hypermarket,Alexandria,2016-08-24
+O153,Cairo Market 153,supermarket,Cairo,2022-09-14
+O155,Alexandria Kiosk 155,kiosk,Alexandria,2019-02-15
+O156,Cairo Kiosk 156,kiosk,Cairo,2019-10-13
+O158,Delta Kiosk 158,kiosk,Delta,2016-07-17
+O159,Upper Egypt Hyper 159,hypermarket,Upper Egypt,2021-03-26
+O160,Giza Market 160,supermarket,Giza,2020-07-05
+O164,Alexandria Market 164,supermarket,Alexandria,2021-02-19
+O165,Giza Kiosk 165,kiosk,Giza,2018-04-04
+O166,Alexandria Kiosk 166,kiosk,Alexandria,2020-08-07
+O168,Cairo Cafe 168,restaurant_cafe,Cairo,2020-05-05
+O169,Delta Kiosk 169,kiosk,Delta,2021-10-26
+O171,Cairo Cafe 171,restaurant_cafe,Cairo,2017-03-12
+O172,Delta Market 172,supermarket,Delta,2023-03-05
+O173,Delta Cafe 173,restaurant_cafe,Delta,2021-04-12
+O174,Giza Kiosk 174,kiosk,Giza,2018-06-29
+O176,Cairo Cafe 176,restaurant_cafe,Cairo,2024-07-08
+O177,Cairo Hyper 177,hypermarket,Cairo,2017-12-16
+O178,Upper Egypt Cafe 178,restaurant_cafe,Upper Egypt,2024-04-22
+O179,Alexandria Hyper 179,hypermarket,Alexandria,2021-06-10
+O180,Delta Market 180,supermarket,Delta,2023-10-05
+O181,Upper Egypt Market 181,supermarket,Upper Egypt,2016-09-14
+O182,Giza Kiosk 182,kiosk,Giza,2021-04-07
+O183,Cairo Hyper 183,hypermarket,Cairo,2017-05-17
+O184,Alexandria Cafe 184,restaurant_cafe,Alexandria,2022-04-24
+O185,Giza Market 185,supermarket,Giza,2022-08-07
+O186,Alexandria Market 186,supermarket,Alexandria,2017-08-04
+O187,Cairo Market 187,supermarket,Cairo,2016-04-11
+O193,Cairo Kiosk 193,kiosk,Cairo,2022-07-09
+O194,Giza Cafe 194,restaurant_cafe,Giza,2022-11-13
+O195,Cairo Market 195,supermarket,Cairo,2016-11-01
+O196,Cairo Cafe 196,restaurant_cafe,Cairo,2021-09-06
+O197,Cairo Kiosk 197,kiosk,Cairo,2017-09-10
+O198,Cairo Hyper 198,hypermarket,Cairo,2022-10-17
+O199,Giza Market 199,supermarket,Giza,2021-08-21
+O201,Delta Cafe 201,restaurant_cafe,Delta,2021-08-20
+O203,Alexandria Cafe 203,restaurant_cafe,Alexandria,2016-06-26
+O204,Giza Kiosk 204,kiosk,Giza,2016-07-08
+O207,Cairo Kiosk 207,kiosk,Cairo,2016-02-10
+O209,Alexandria Kiosk 209,kiosk,Alexandria,2019-06-25
+O211,Cairo Market 211,supermarket,Cairo,2017-08-31
+O212,Cairo Market 212,supermarket,Cairo,2016-03-03
+O214,Giza Cafe 214,restaurant_cafe,Giza,2018-12-17
+O216,Delta Market 216,supermarket,Delta,2021-11-05
+O219,Cairo Market 219,supermarket,Cairo,2023-05-26
+O220,Giza Market 220,supermarket,Giza,2021-04-25
+O222,Giza Cafe 222,restaurant_cafe,Giza,2015-12-25
+O223,Giza Kiosk 223,kiosk,Giza,2025-01-27
+O224,Alexandria Cafe 224,restaurant_cafe,Alexandria,2020-09-01
+O225,Delta Kiosk 225,kiosk,Delta,2020-05-04
+O226,Giza Hyper 226,hypermarket,Giza,2018-05-07
+O227,Giza Kiosk 227,kiosk,Giza,2025-08-18
+O229,Cairo Kiosk 229,kiosk,Cairo,2019-07-15
+O230,Cairo Market 230,supermarket,Cairo,2025-01-06
+O231,Delta Market 231,supermarket,Delta,2018-03-22
+O232,Alexandria Kiosk 232,kiosk,Alexandria,2016-10-20
+O233,Delta Kiosk 233,kiosk,Delta,2016-02-04
+O234,Alexandria Kiosk 234,kiosk,Alexandria,2018-12-16
+O235,Cairo Market 235,supermarket,Cairo,2020-12-21
+O237,Alexandria Market 237,supermarket,Alexandria,2022-06-26
+O238,Delta Market 238,supermarket,Delta,2016-04-23
+O239,Alexandria Cafe 239,restaurant_cafe,Alexandria,2024-12-16
+O240,Alexandria Kiosk 240,kiosk,Alexandria,2016-12-22
+O243,Alexandria Kiosk 243,kiosk,Alexandria,2016-12-14
+O245,Delta Market 245,supermarket,Delta,2018-03-11
+O246,Giza Market 246,supermarket,Giza,2019-12-09
+O247,Alexandria Kiosk 247,kiosk,Alexandria,2020-04-26
+O248,Cairo Market 248,supermarket,Cairo,2018-10-12
+O249,Alexandria Kiosk 249,kiosk,Alexandria,2017-04-23
+O250,Cairo Cafe 250,restaurant_cafe,Cairo,2021-03-15
+O251,Delta Cafe 251,restaurant_cafe,Delta,2017-05-04
+O254,Cairo Market 254,supermarket,Cairo,2024-09-23
+O255,Cairo Kiosk 255,kiosk,Cairo,2016-02-28
+O256,Cairo Hyper 256,hypermarket,Cairo,2016-05-29
+O257,Cairo Kiosk 257,kiosk,Cairo,2021-05-08
+O260,Cairo Kiosk 260,kiosk,Cairo,2015-12-19
+O261,Cairo Kiosk 261,kiosk,Cairo,2024-03-18
+O263,Upper Egypt Hyper 263,hypermarket,Upper Egypt,2025-02-03
+O266,Upper Egypt Market 266,supermarket,Upper Egypt,2017-09-20
+O267,Delta Market 267,supermarket,Delta,2023-01-24
+O268,Delta Market 268,supermarket,Delta,2020-01-05
+O269,Cairo Hyper 269,hypermarket,Cairo,2018-10-30
+O270,Cairo Market 270,supermarket,Cairo,2024-04-22
+O272,Cairo Market 272,supermarket,Cairo,2021-12-19
+O273,Giza Kiosk 273,kiosk,Giza,2018-12-28
+O275,Delta Market 275,supermarket,Delta,2018-10-07
+O278,Alexandria Market 278,supermarket,Alexandria,2021-10-28
+O279,Cairo Market 279,supermarket,Cairo,2020-03-01
+O281,Cairo Cafe 281,restaurant_cafe,Cairo,2020-12-21
+O282,Cairo Cafe 282,restaurant_cafe,Cairo,2020-08-02
+O283,Giza Kiosk 283,kiosk,Giza,2021-08-04
+O284,Delta Cafe 284,restaurant_cafe,Delta,2022-02-20
+O285,Giza Kiosk 285,kiosk,Giza,2018-07-29
+O287,Giza Cafe 287,restaurant_cafe,Giza,2021-07-22
+O289,Delta Kiosk 289,kiosk,Delta,2025-04-28
+O290,Delta Cafe 290,restaurant_cafe,Delta,2024-09-02
+O293,Giza Kiosk 293,kiosk,Giza,2023-08-08
+O294,Delta Cafe 294,restaurant_cafe,Delta,2021-03-09
+O296,Alexandria Market 296,supermarket,Alexandria,2017-06-08
+O297,Delta Kiosk 297,kiosk,Delta,2022-10-30
+O298,Upper Egypt Kiosk 298,kiosk,Upper Egypt,2017-02-04

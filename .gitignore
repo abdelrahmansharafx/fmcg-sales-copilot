@@ -1,0 +1,14 @@
+# Python / tooling
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets
+.env
+
+# Generated artefacts (rebuilt from code: generate_data.py, train.py)
+data/*.db
+models/
+mlruns/
+chroma_db/

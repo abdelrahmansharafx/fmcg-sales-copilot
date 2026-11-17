@@ -1,0 +1,26 @@
+sku_id,brand,flavour,category,pack_size,pack_type,price_egp
+S01,Coca-Cola,Original,Cola,330ml can,can,20
+S02,Coca-Cola,Original,Cola,500ml PET,small,17
+S03,Coca-Cola,Original,Cola,250ml glass,small,14
+S04,Coca-Cola,Original,Cola,1L PET,medium,28
+S05,Coca-Cola,Original,Cola,2.25L PET,large,48
+S06,Coca-Cola,Zero,Cola,330ml can,can,20
+S07,Coca-Cola,Zero,Cola,1L PET,medium,28
+S08,Coca-Cola,Zero,Cola,2.25L PET,large,48
+S09,Sprite,Lemon-Lime,Lemon-lime,330ml can,can,20
+S10,Sprite,Lemon-Lime,Lemon-lime,1L PET,medium,28
+S11,Sprite,Lemon-Lime,Lemon-lime,2.25L PET,large,48
+S12,Sprite,Zero,Lemon-lime,330ml can,can,20
+S13,Fanta,Orange,Orange,330ml can,can,20
+S14,Fanta,Orange,Orange,1L PET,medium,28
+S15,Fanta,Orange,Orange,2.25L PET,large,48
+S16,Fanta,Strawberry,Fruit,330ml can,can,20
+S17,Fanta,Strawberry,Fruit,1L PET,medium,28
+S18,Fanta,Pineapple,Fruit,1L PET,medium,28
+S19,Schweppes,Pomegranate,Mixer,330ml can,can,22
+S20,Schweppes,Pomegranate,Mixer,1L PET,medium,30
+S21,Schweppes,Ginger Ale,Mixer,330ml can,can,22
+S22,Powerade,Mountain Blast,Sports drink,500ml PET,small,22
+S23,Powerade,Orange,Sports drink,500ml PET,small,22
+S24,Dasani,Still Water,Water,600ml PET,small,8
+S25,Dasani,Still Water,Water,1.5L PET,medium,12
