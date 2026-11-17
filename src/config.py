@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -25,23 +27,47 @@ MLFLOW_TRACKING_URI = f"sqlite:///{ROOT / 'mlflow.db'}"
 
 
 # --- LLM provider ------------------------------------------------------------------------------
+
+
 @dataclass(frozen=True)
 class LLMSettings:
     """Which LLM and embedding backend to use, resolved from environment variables."""
 
     provider: str  # "azure", "openai" or "none" (no key configured)
     api_key: str | None
-    azure_endpoint: str | None
-    azure_api_version: str
+    azure_base_url: str | None  # https://<resource>/openai/v1/ (Azure only)
+    azure_api_version: str | None  # None = use the Azure "v1" API, which needs no version
     chat_model: str  # OpenAI model name, or the Azure *deployment* name
     embedding_provider: str  # "azure", "openai" or "local" (offline Chroma model)
     embedding_model: str  # OpenAI model name, or Azure deployment name; unused for "local"
 
 
-def load_llm_settings() -> LLMSettings:
-    """Azure OpenAI if its env vars are set, otherwise OpenAI, otherwise 'none'.
+# A real Azure api-version looks like 2024-10-21 or 2025-04-01-preview. Anything else
+# (an empty value, a template placeholder) is ignored and the v1 endpoint is used.
+_API_VERSION = re.compile(r"^\d{4}-\d{2}-\d{2}(-preview)?$")
 
-    Set LLM_PROVIDER=openai|azure to force one, and EMBEDDING_PROVIDER=local to force the
+
+def azure_base_url(endpoint: str) -> str:
+    """Reduce any Azure endpoint the portal shows to the OpenAI "v1" base URL.
+
+    The portal may give https://x.openai.azure.com/, https://x.services.ai.azure.com/api/projects/y
+    or a full request URL ending in /openai/v1/responses. All of them mean the same resource, so
+    we keep only scheme + host and append /openai/v1/.
+    """
+    endpoint = endpoint.strip()
+    if "://" not in endpoint:
+        endpoint = "https://" + endpoint
+    parsed = urlparse(endpoint)
+    return f"{parsed.scheme}://{parsed.netloc}/openai/v1/"
+
+
+def load_llm_settings() -> LLMSettings:
+    """Azure OpenAI is the default; OpenAI is the fallback; otherwise provider is 'none'.
+
+    Azure is chosen when AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT are set. We call it
+    through Azure's "v1" endpoint, so no API version is needed. Setting a real
+    AZURE_OPENAI_API_VERSION switches to the older dated-version API instead.
+    LLM_PROVIDER=openai|azure forces one provider, and EMBEDDING_PROVIDER=local forces the
     offline embedding model. Read at call time so tests can change the environment.
     """
     azure_key = os.getenv("AZURE_OPENAI_API_KEY")
@@ -68,17 +94,23 @@ def load_llm_settings() -> LLMSettings:
             embedding_provider = "local"
 
     if provider == "azure":
-        chat_model = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4o-mini")
+        # Azure calls the model you deployed a "deployment"; its name is what we pass as `model`.
+        chat_model = (
+            os.getenv("AZURE_OPENAI_DEPLOYMENT")
+            or os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT")
+            or "gpt-4o-mini"
+        )
         embedding_model = azure_embedding or ""
     else:
         chat_model = os.getenv("OPENAI_CHAT_MODEL", "gpt-4o-mini")
         embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "").strip()
     return LLMSettings(
         provider=provider,
         api_key=azure_key if provider == "azure" else openai_key,
-        azure_endpoint=azure_endpoint,
-        azure_api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-10-21"),
+        azure_base_url=azure_base_url(azure_endpoint) if azure_endpoint else None,
+        azure_api_version=api_version if _API_VERSION.match(api_version) else None,
         chat_model=chat_model,
         embedding_provider=embedding_provider,
         embedding_model=embedding_model,
