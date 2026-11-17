@@ -18,7 +18,7 @@ import pandas as pd
 import sqlalchemy as sa
 
 from src.config import DB_URL, MODELS_DIR
-from src.errors import ToolError
+from src.errors import NotFoundError, NotReadyError, ToolError
 from src.forecast.features import (
     CATEGORICAL_FEATURES,
     FEATURES,
@@ -39,7 +39,7 @@ def load_model() -> tuple[lgb.LGBMRegressor, dict]:
     """Load the trained model and its metadata (feature list, category levels, test metrics)."""
     model_path, meta_path = MODELS_DIR / "lgbm_forecast.joblib", MODELS_DIR / "model_meta.json"
     if not model_path.exists() or not meta_path.exists():
-        raise ToolError("Forecast model not found. Run: uv run python -m src.forecast.train")
+        raise NotReadyError("Forecast model not found. Run: uv run python -m src.forecast.train")
     return joblib.load(model_path), json.loads(meta_path.read_text())
 
 
@@ -97,13 +97,15 @@ def forecast_outlet(
 
     panel = load_panel(engine, outlet_id=outlet_id, up_to=origin)
     if panel.empty:
-        raise ToolError(f"No sales found for outlet '{outlet_id}' up to {origin.date()}.")
+        raise NotFoundError(f"No sales found for outlet '{outlet_id}' up to {origin.date()}.")
     if sku_ids is not None:
         panel = panel[panel["sku_id"].isin(sku_ids)]
     history = add_history_features(panel)
     now = history[history["week_start"] == origin].copy()  # SKUs selling at the origin week
     if now.empty:
-        raise ToolError(f"Outlet '{outlet_id}' has no sales rows in the week of {origin.date()}.")
+        raise NotFoundError(
+            f"Outlet '{outlet_id}' has no sales rows in the week of {origin.date()}."
+        )
 
     rows = []
     for horizon in range(1, weeks + 1):

@@ -46,7 +46,7 @@ def test_question_set_is_well_formed():
         assert set(q.allowed_extra_tools) <= tool_names, q.id
         assert q.checks, q.id
         assert {c["type"] for c in q.checks} <= {"numeric", "contains", "regex", "judge"}, q.id
-    assert {q.id for q in questions if q.regression} == {"reg-01", "reg-02"}
+    assert {q.id for q in questions if q.regression} == {"reg-01", "reg-02", "reg-03"}
     assert {q.cohort for q in questions} == {"dev", "fresh"}
 
 

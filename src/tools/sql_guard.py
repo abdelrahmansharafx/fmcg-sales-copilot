@@ -24,7 +24,7 @@ import sqlglot
 from sqlglot import exp
 
 from src.config import DB_URL
-from src.errors import ToolError
+from src.errors import NotReadyError, ToolError
 
 MAX_ROWS = 200
 TIMEOUT_SECONDS = 5.0
@@ -93,7 +93,7 @@ def validate_select(sql: str) -> str:
 def _db_path() -> Path:
     path = sa.engine.make_url(DB_URL).database
     if not path:
-        raise ToolError("DATABASE_URL must point to a SQLite file for the SQL tool.")
+        raise NotReadyError("DATABASE_URL must point to a SQLite file for the SQL tool.")
     return Path(path)
 
 
@@ -108,7 +108,7 @@ def run_select(
     sql = validate_select(sql)
     path = Path(db_path or _db_path())
     if not path.exists():
-        raise ToolError(
+        raise NotReadyError(
             f"Database not found at {path}. Run: uv run python scripts/generate_data.py"
         )
 

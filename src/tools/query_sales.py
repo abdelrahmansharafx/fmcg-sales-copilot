@@ -23,11 +23,19 @@ Rules:
 - Read-only: a single SELECT (CTEs with WITH are fine). Use only the tables above.
 - Time: weeks are identified by week_start (a Monday, format YYYY-MM-DD). The latest week in \
 the data is {latest_week}. Measure every relative period back from that date, NEVER from \
-today's date:
-    "last week"  = week_start = '{latest_week}'
-    "last month" = the last 4 weeks (week_start > date('{latest_week}', '-28 days'))
-    "the month before" = the 4 weeks before that (between -56 and -28 days)
-    "last quarter" = 13 weeks, "last year" = 52 weeks.
+today's date. Use these exact conditions (half-open ranges, so periods never overlap or \
+leave a gap):
+    "last week"        week_start = '{latest_week}'
+    "last N weeks"     week_start > date('{latest_week}', '-<7*N> days')
+    "last month"       = last 4 weeks: week_start > date('{latest_week}', '-28 days')
+    "the N weeks before that" (previous period): \
+week_start > date('{latest_week}', '-<14*N> days') \
+AND week_start <= date('{latest_week}', '-<7*N> days')
+    "the month before" = previous 4 weeks: \
+week_start > date('{latest_week}', '-56 days') \
+AND week_start <= date('{latest_week}', '-28 days')
+    "last quarter" = 13 weeks, "last year" = 52 weeks (same pattern).
+  Never use BETWEEN for week windows: it includes both ends and easily leaves a gap or overlaps.
 - units = 0 usually means a stock-out, not zero demand. revenue_egp = units * unit_price_egp.
 - Compare periods with SUM(units) (or revenue_egp), and use ROUND for percentages.
 - Keep result sets small: aggregate, ORDER BY the interesting column, and add LIMIT {limit} \

@@ -24,7 +24,7 @@ import chromadb
 
 from src import llm
 from src.config import CHROMA_DIR, DOCS_DIR
-from src.errors import ToolError
+from src.errors import NotReadyError, ToolError
 from src.tools.schemas import PolicyPassage, PolicySearchResult
 
 MAX_CHUNK_CHARS = 900
@@ -68,7 +68,7 @@ def chunk_document(path: Path) -> list[Chunk]:
 def load_chunks(docs_dir: Path = DOCS_DIR) -> list[Chunk]:
     files = sorted(docs_dir.glob("*.md"))
     if not files:
-        raise ToolError(f"No policy documents found in {docs_dir}.")
+        raise NotReadyError(f"No policy documents found in {docs_dir}.")
     return [chunk for path in files for chunk in chunk_document(path)]
 
 

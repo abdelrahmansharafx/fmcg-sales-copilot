@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sqlalchemy as sa
 
-from src.errors import ToolError
+from src.errors import NotFoundError
 from src.forecast.predict import get_engine
 
 
@@ -25,7 +25,9 @@ def require_sku(sku_id: str) -> str:
     """Return the SKU's name or raise a helpful error."""
     names = sku_names()
     if sku_id not in names:
-        raise ToolError(f"Unknown sku_id '{sku_id}'. Valid ids look like S01..S{len(names):02d}.")
+        raise NotFoundError(
+            f"Unknown sku_id '{sku_id}'. Valid ids look like S01..S{len(names):02d}."
+        )
     return names[sku_id]
 
 
@@ -36,5 +38,5 @@ def outlet_channel(outlet_id: str) -> str:
             sa.text("SELECT channel FROM outlets WHERE outlet_id = :id"), {"id": outlet_id}
         ).first()
     if row is None:
-        raise ToolError(f"Unknown outlet_id '{outlet_id}'. Valid ids look like O001..O300.")
+        raise NotFoundError(f"Unknown outlet_id '{outlet_id}'. Valid ids look like O001..O300.")
     return row[0]

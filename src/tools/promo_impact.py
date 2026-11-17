@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 import sqlalchemy as sa
 
-from src.errors import ToolError
+from src.errors import NotFoundError, ToolError
 from src.forecast.features import RAMADAN_PERIODS
 from src.forecast.predict import get_engine
 from src.tools.catalog import require_sku
@@ -68,7 +68,7 @@ def promo_impact(sku_id: str, promo_id: int) -> PromoImpact:
             .first()
         )
     if promo is None:
-        raise ToolError(f"Unknown promo_id {promo_id}.")
+        raise NotFoundError(f"Unknown promo_id {promo_id}.")
     if promo["sku_id"] != sku_id:
         raise ToolError(f"Promotion {promo_id} is for SKU {promo['sku_id']}, not {sku_id}.")
 

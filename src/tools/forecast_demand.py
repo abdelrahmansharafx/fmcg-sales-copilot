@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.errors import ToolError
+from src.errors import NotFoundError, ToolError
 from src.forecast.predict import forecast_outlet, load_model
 from src.tools.catalog import outlet_channel, require_sku
 from src.tools.schemas import ForecastResult, WeekForecast
@@ -30,12 +30,12 @@ def forecast_demand(
         data = forecast_outlet(outlet_id, weeks=weeks, as_of=as_of, sku_ids=[sku_id])
     except ToolError as error:
         if "no sales rows" in str(error):
-            raise ToolError(
+            raise NotFoundError(
                 f"Outlet '{outlet_id}' does not stock {sku_id} ({sku_name})."
             ) from error
         raise
     if data.empty:
-        raise ToolError(f"Outlet '{outlet_id}' does not stock {sku_id} ({sku_name}).")
+        raise NotFoundError(f"Outlet '{outlet_id}' does not stock {sku_id} ({sku_name}).")
 
     _, meta = load_model()
     history_weeks = int(data["history_weeks"].iloc[0])

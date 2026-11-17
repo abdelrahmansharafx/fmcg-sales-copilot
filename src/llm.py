@@ -10,10 +10,13 @@ from dataclasses import dataclass
 from openai import AzureOpenAI, OpenAI
 
 from src.config import LLMSettings, llm_prices_per_million, load_llm_settings
-from src.errors import ToolError
+from src.errors import NotReadyError
+
+# Per LLM request. The SDK default (10 minutes) would hold an API worker far too long.
+REQUEST_TIMEOUT_SECONDS = 60
 
 
-class LLMNotConfiguredError(ToolError):
+class LLMNotConfiguredError(NotReadyError):
     """Raised when a tool needs the LLM but no API key is configured."""
 
 
@@ -30,10 +33,15 @@ def get_client(settings: LLMSettings | None = None) -> OpenAI:
                 api_key=settings.api_key,
                 azure_endpoint=settings.azure_base_url.removesuffix("openai/v1/"),
                 api_version=settings.azure_api_version,
+                timeout=REQUEST_TIMEOUT_SECONDS,
             )
-        return OpenAI(api_key=settings.api_key, base_url=settings.azure_base_url)
+        return OpenAI(
+            api_key=settings.api_key,
+            base_url=settings.azure_base_url,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
     if settings.provider == "openai":
-        return OpenAI(api_key=settings.api_key)
+        return OpenAI(api_key=settings.api_key, timeout=REQUEST_TIMEOUT_SECONDS)
     raise LLMNotConfiguredError(
         "No LLM configured. Set AZURE_OPENAI_API_KEY + AZURE_OPENAI_ENDPOINT, or OPENAI_API_KEY "
         "(see .env.example)."
@@ -53,15 +61,22 @@ def get_chat_model(settings: LLMSettings | None = None):
                 api_version=settings.azure_api_version,
                 azure_deployment=settings.chat_model,
                 temperature=0,
+                timeout=REQUEST_TIMEOUT_SECONDS,
             )
         return ChatOpenAI(
             api_key=settings.api_key,
             base_url=settings.azure_base_url,
             model=settings.chat_model,
             temperature=0,
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
     if settings.provider == "openai":
-        return ChatOpenAI(api_key=settings.api_key, model=settings.chat_model, temperature=0)
+        return ChatOpenAI(
+            api_key=settings.api_key,
+            model=settings.chat_model,
+            temperature=0,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
     raise LLMNotConfiguredError(
         "No LLM configured. Set AZURE_OPENAI_API_KEY + AZURE_OPENAI_ENDPOINT, or OPENAI_API_KEY."
     )

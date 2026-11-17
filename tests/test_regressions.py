@@ -81,3 +81,16 @@ def test_agent_does_not_invent_a_market_share():
     assert any(
         p in answer.lower() for p in ["don't know", "do not know", "cannot", "no competitor"]
     )
+
+
+# --- 3. period windows in generated SQL ---------------------------------------------------------
+def test_sql_prompt_defines_gap_free_period_windows():
+    """The LLM once wrote the previous window as BETWEEN -56 AND -29 days, which silently drops
+    the week at exactly -28 days and compares non-adjacent periods. The prompt must give exact,
+    half-open conditions and forbid BETWEEN for week windows."""
+    from src.tools.query_sales import SYSTEM_PROMPT
+
+    prompt = SYSTEM_PROMPT.format(schema="", latest_week="2025-12-22", limit=200)
+    assert "week_start > date('2025-12-22', '-56 days')" in prompt
+    assert "week_start <= date('2025-12-22', '-28 days')" in prompt
+    assert "Never use BETWEEN for week windows" in prompt
