@@ -115,3 +115,15 @@ def load_llm_settings() -> LLMSettings:
         embedding_provider=embedding_provider,
         embedding_model=embedding_model,
     )
+
+
+def llm_prices_per_million() -> tuple[float, float]:
+    """(input, output) USD per 1M tokens, used for cost ESTIMATES only.
+
+    Defaults are the public list price of gpt-4.1-mini; Azure prices vary by region and
+    deployment type, so override with LLM_PRICE_INPUT_PER_1M / LLM_PRICE_OUTPUT_PER_1M.
+    """
+    return (
+        float(os.getenv("LLM_PRICE_INPUT_PER_1M", "0.40")),
+        float(os.getenv("LLM_PRICE_OUTPUT_PER_1M", "1.60")),
+    )

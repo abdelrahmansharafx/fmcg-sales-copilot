@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
+from dataclasses import dataclass
+
 from openai import AzureOpenAI, OpenAI
 
-from src.config import LLMSettings, load_llm_settings
+from src.config import LLMSettings, llm_prices_per_million, load_llm_settings
 from src.errors import ToolError
 
 
@@ -62,12 +67,56 @@ def get_chat_model(settings: LLMSettings | None = None):
     )
 
 
-def complete(messages: list[dict[str, str]], temperature: float = 0.0) -> str:
-    """Send chat messages and return the reply text (temperature 0 = most deterministic)."""
+@dataclass
+class Usage:
+    """Tokens used by the LLM calls made through complete() while a meter is active."""
+
+    calls: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+
+
+_meter: ContextVar[Usage | None] = ContextVar("llm_usage_meter", default=None)
+
+
+@contextmanager
+def track_usage() -> Iterator[Usage]:
+    """Count the tokens of every complete() call inside the `with` block.
+
+    The agent wraps a request in this so LLM calls made INSIDE tools (text-to-SQL) are billed
+    to the request too, not just the agent's own calls.
+    """
+    usage = Usage()
+    token = _meter.set(usage)
+    try:
+        yield usage
+    finally:
+        _meter.reset(token)
+
+
+def estimate_cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    """Estimated USD cost of the given token counts (see llm_prices_per_million)."""
+    price_in, price_out = llm_prices_per_million()
+    return (prompt_tokens * price_in + completion_tokens * price_out) / 1_000_000
+
+
+def complete(
+    messages: list[dict[str, str]], temperature: float = 0.0, json_mode: bool = False
+) -> str:
+    """Send chat messages and return the reply text (temperature 0 = most deterministic).
+
+    json_mode=True asks the model to reply with a single JSON object.
+    """
     settings = load_llm_settings()
+    options = {"response_format": {"type": "json_object"}} if json_mode else {}
     response = get_client(settings).chat.completions.create(
-        model=settings.chat_model, messages=messages, temperature=temperature
+        model=settings.chat_model, messages=messages, temperature=temperature, **options
     )
+    meter = _meter.get()
+    if meter is not None and response.usage is not None:
+        meter.calls += 1
+        meter.prompt_tokens += response.usage.prompt_tokens
+        meter.completion_tokens += response.usage.completion_tokens
     return response.choices[0].message.content or ""
 
 

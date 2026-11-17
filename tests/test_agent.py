@@ -180,3 +180,35 @@ def test_system_prompt_is_filled_with_live_facts():
     assert "2025-12-22" in prompt  # latest data week
     assert "S01: Coca-Cola Original 330ml can" in prompt
     assert "Coca-Cola" in prompt and "NO competitor sales" in prompt
+
+
+def test_llm_calls_made_inside_tools_are_counted(monkeypatch):
+    """A tool that calls the LLM itself (like text-to-SQL) must be billed to the request."""
+    from types import SimpleNamespace
+
+    from src import llm
+
+    def fake_create(**kwargs):
+        usage = SimpleNamespace(prompt_tokens=1000, completion_tokens=50)
+        message = SimpleNamespace(content="SELECT 1")
+        return SimpleNamespace(usage=usage, choices=[SimpleNamespace(message=message)])
+
+    fake_client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=fake_create))
+    )
+    monkeypatch.setattr(llm, "get_client", lambda settings=None: fake_client)
+
+    def smart_tool(x: str) -> str:
+        """A tool that asks the LLM.
+
+        Args:
+            x: Anything.
+        """
+        return llm.complete([{"role": "user", "content": x}])
+
+    model = ScriptedModel(call("smart_tool", {"x": "hi"}), final("done"))
+    result = run_agent("q", model=model, tools=[smart_tool], system="s")
+    assert result.prompt_tokens == 100 + 1000  # agent's own call + the tool's call
+    assert result.completion_tokens == 20 + 50
+    assert result.llm_calls == 3
+    assert result.cost_usd == pytest.approx((1100 * 0.40 + 70 * 1.60) / 1_000_000)

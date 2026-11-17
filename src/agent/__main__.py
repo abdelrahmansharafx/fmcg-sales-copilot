@@ -52,7 +52,7 @@ def main() -> int:
     note = " (step limit reached)" if result.hit_step_limit else ""
     print(
         f"[{len(result.tool_calls)} tool calls, {result.llm_calls} LLM calls, "
-        f"{result.prompt_tokens + result.completion_tokens:,} tokens, {result.seconds}s]{note}"
+        f"{result.total_tokens:,} tokens, ~${result.cost_usd:.4f}, {result.seconds}s]{note}"
     )
     return 0
 

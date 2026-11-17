@@ -72,6 +72,16 @@ class AgentResult:
     completion_tokens: int = 0
     seconds: float = 0.0
     hit_step_limit: bool = False
+    model_name: str = ""
+
+    @property
+    def total_tokens(self) -> int:
+        return self.prompt_tokens + self.completion_tokens
+
+    @property
+    def cost_usd(self) -> float:
+        """Estimated cost of this question, including LLM calls made inside tools."""
+        return llm.estimate_cost_usd(self.prompt_tokens, self.completion_tokens)
 
 
 def as_langchain_tool(function: Callable) -> StructuredTool:
@@ -187,7 +197,8 @@ def run_agent(
     }
     try:
         # The recursion limit is a hard backstop in case the graph itself ever loops.
-        final = graph.invoke(initial, {"recursion_limit": 2 * max_steps + 6})
+        with llm.track_usage() as tool_usage:  # LLM calls made inside tools (text-to-SQL)
+            final = graph.invoke(initial, {"recursion_limit": 2 * max_steps + 6})
     except openai.AuthenticationError as error:
         raise AgentError("The LLM rejected the credentials. Check the API key in .env.") from error
     except openai.RateLimitError as error:
@@ -199,7 +210,11 @@ def run_agent(
             f"The LLM returned an error ({error.status_code}): {error.message}"
         ) from error
 
-    return summarise(question, final, max_steps, time.perf_counter() - started)
+    result = summarise(question, final, max_steps, time.perf_counter() - started)
+    result.llm_calls += tool_usage.calls
+    result.prompt_tokens += tool_usage.prompt_tokens
+    result.completion_tokens += tool_usage.completion_tokens
+    return result
 
 
 def summarise(question: str, final: dict, max_steps: int, seconds: float) -> AgentResult:
@@ -211,6 +226,7 @@ def summarise(question: str, final: dict, max_steps: int, seconds: float) -> Age
             result.tool_calls.append(message.additional_kwargs["record"])
         elif isinstance(message, AIMessage):
             result.llm_calls += 1
+            result.model_name = result.model_name or message.response_metadata.get("model_name", "")
             usage = message.usage_metadata or {}
             result.prompt_tokens += usage.get("input_tokens", 0)
             result.completion_tokens += usage.get("output_tokens", 0)
