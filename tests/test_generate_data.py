@@ -62,3 +62,11 @@ def test_same_seed_gives_same_data():
 
     assert build(5).equals(build(5))
     assert not build(5).equals(build(6))
+
+
+def test_expected_units_are_the_noise_free_mean(world):
+    _, _, _, sales = world
+    assert (sales["expected_units"] > 0).all()
+    # Noise averages out; stock-outs remove a few %, so actual units sit a bit below the mean.
+    ratio = sales["units"].sum() / sales["expected_units"].sum()
+    assert 0.9 < ratio < 1.02

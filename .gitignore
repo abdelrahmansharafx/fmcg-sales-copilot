@@ -13,3 +13,4 @@ models/
 mlruns/
 chroma_db/
 mlflow.db
+data/true_demand.csv.gz

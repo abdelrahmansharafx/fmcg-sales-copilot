@@ -29,6 +29,7 @@ import sqlalchemy as sa
 
 DEFAULT_SEED = 42
 DEFAULT_DB = Path(__file__).resolve().parent.parent / "data" / "sales.db"
+TRUE_DEMAND_FILE = "true_demand.csv.gz"  # next to the db; git-ignored, rebuilt from the seed
 
 N_WEEKS = 104  # two years of weekly data
 WEEKS = pd.date_range("2024-01-01", periods=N_WEEKS, freq="W-MON")  # week_start (Mondays)
@@ -378,6 +379,9 @@ def build_sales(
             "unit_price_egp": row_price,
             "promo_id": pd.array(np.where(row_promo > 0, row_promo, pd.NA), dtype="Int64"),
             "revenue_egp": np.round(row_units * row_price, 2),
+            # The true mean demand BEFORE noise and stock-outs. Not part of the database: it is
+            # saved separately (main) and only used to measure the forecast "oracle" floor.
+            "expected_units": np.round(mean_units[pair_idx, week_idx], 4),
         }
     )
 
@@ -461,6 +465,13 @@ def main() -> None:
     skus = make_skus()
     promos = make_promotions(rng, skus)
     sales = build_sales(rng, outlets, skus, promos)
+
+    # The simulator's hidden truth lives in its own file, so it can never leak into the
+    # database that the SQL tool (and therefore the LLM) can query.
+    true_path = args.db.parent / TRUE_DEMAND_FILE
+    key = ["week_start", "outlet_id", "sku_id"]
+    sales[[*key, "expected_units"]].to_csv(true_path, index=False)
+    sales = sales.drop(columns="expected_units")
 
     engine = write_db(args.db, outlets=outlets, skus=skus, promotions=promos, sales_weekly=sales)
     write_samples(
