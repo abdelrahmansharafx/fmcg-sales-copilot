@@ -12,3 +12,4 @@ data/*.db
 models/
 mlruns/
 chroma_db/
+mlflow.db
