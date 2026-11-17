@@ -15,7 +15,7 @@ KEY=...   # the value of API_KEY
 curl localhost:8000/health
 
 curl -X POST localhost:8000/ask -H "X-API-Key: $KEY" -H 'content-type: application/json' \
-  -d '{"question": "Which Alexandria outlet dropped the most in the last 4 weeks vs the 4 before?"}'
+  -d '{"question": "Which Alexandria outlet had the largest percentage drop in units over the last 4 weeks vs the 4 before?"}'
 
 curl -X POST localhost:8000/forecast -H "X-API-Key: $KEY" -H 'content-type: application/json' \
   -d '{"outlet_id": "O001", "sku_id": "S01", "weeks": 4}'

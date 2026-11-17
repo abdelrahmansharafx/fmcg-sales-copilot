@@ -1,0 +1,19 @@
+# Local run:   docker compose up --build        (then http://localhost:8000/docs)
+# Needs API_KEY (and, for /ask, the Azure OpenAI variables) in .env or your shell: see .env.example.
+services:
+  api:
+    build: .
+    image: fmcg-copilot:local
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Fail fast with a clear message instead of starting an API without authentication.
+      API_KEY: ${API_KEY:?Set API_KEY in .env or your shell (see .env.example)}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

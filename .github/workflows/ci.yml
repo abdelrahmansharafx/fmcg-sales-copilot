@@ -1,0 +1,169 @@
+name: CI/CD
+
+# Every push and pull request: lint, test, build the image and smoke-test it.
+# Pushes to main additionally deploy to Azure Container Apps (OIDC login, no stored password).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  MLFLOW_DISABLE_AGENT_HINT: "1"
+  IMAGE_NAME: fmcg-copilot
+
+jobs:
+  test:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies (exactly as locked)
+        run: uv sync --frozen
+
+      - name: Ruff lint and format check
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Refuse tracked secrets files
+        run: |
+          if git ls-files | grep -E '(^|/)\.env(\..+)?$' | grep -v -E '\.env\.example$'; then
+            echo "A .env file is tracked by git. Remove it and rotate any keys it held."; exit 1
+          fi
+
+      - name: Cache the offline embedding model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/chroma
+          key: chroma-onnx-v1
+
+      - name: Build the synthetic data and train the model
+        run: |
+          uv run python scripts/generate_data.py
+          uv run python -m src.forecast.train
+
+      - name: Tests (offline; the live-LLM tests are excluded)
+        run: uv run pytest -q
+
+  build:
+    name: Build and smoke-test the image
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build (linux/amd64, same as Azure)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Image size
+        run: docker image ls ${{ env.IMAGE_NAME }}:ci
+
+      - name: Smoke test the container
+        run: |
+          docker run -d --name smoke -p 8000:8000 -e API_KEY=ci-smoke-key-0123456789 ${{ env.IMAGE_NAME }}:ci
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /tmp/health.json -w '%{http_code}' http://localhost:8000/health || true)
+            [ "$code" = "200" ] && break
+            sleep 2
+          done
+          cat /tmp/health.json; echo
+          test "$code" = "200"
+          grep -q '"database":true' /tmp/health.json
+          grep -q '"model":true' /tmp/health.json
+          # authentication is enforced, and the key works on a real forecast
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8000/forecast \
+            -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01"}')" = "401"
+          curl -sf -X POST localhost:8000/forecast -H 'X-API-Key: ci-smoke-key-0123456789' \
+            -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01","weeks":2}' | head -c 300; echo
+          # the process must not run as root
+          test "$(docker exec smoke id -u)" != "0"
+          docker logs smoke | tail -5
+
+  deploy:
+    name: Deploy to Azure Container Apps
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write # lets the job request an OIDC token for Azure (no password stored)
+      contents: read
+    env:
+      REGISTRY: ${{ vars.ACR_NAME }}.azurecr.io
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to the container registry
+        run: az acr login --name "${{ vars.ACR_NAME }}"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push (linux/amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+
+      - name: Roll out the new revision
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az containerapp ingress update -g "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP_NAME }}" --target-port 8000
+          az containerapp update -g "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP_NAME }}" \
+            --image "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+
+      - name: Smoke test the public URL
+        run: |
+          fqdn=$(az containerapp show -g "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP_NAME }}" --query properties.configuration.ingress.fqdn -o tsv)
+          echo "URL: https://$fqdn"
+          # The app scales to zero: the first request wakes it up, so allow a slow cold start.
+          for i in $(seq 1 20); do
+            code=$(curl -s -m 90 -o /tmp/health.json -w '%{http_code}' "https://$fqdn/health" || true)
+            echo "attempt $i: HTTP $code"
+            [ "$code" = "200" ] && break
+            sleep 15
+          done
+          cat /tmp/health.json; echo
+          test "$code" = "200"
+          # authentication must be on in production
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST "https://$fqdn/forecast" \
+            -H 'content-type: application/json' -d '{"outlet_id":"O001","sku_id":"S01"}')" = "401"
+          echo "### Deployed: https://$fqdn" >> "$GITHUB_STEP_SUMMARY"

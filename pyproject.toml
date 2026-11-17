@@ -10,8 +10,6 @@ dependencies = [
     "langchain-openai>=1.8.0",
     "langgraph>=1.2.22",
     "lightgbm>=4.7.0",
-    "mcp>=2.3.0",
-    "mlflow>=3.18.0",
     "numpy",
     "openai>=3.52.0",
     "pandas",
@@ -23,8 +21,15 @@ dependencies = [
     "uvicorn>=0.54.0",
 ]
 
+# Runtime dependencies (above) are everything the API needs. The groups below are for development
+# and are NOT installed in the production image (see Dockerfile).
 [dependency-groups]
 dev = ["pytest", "ruff"]
+train = ["mlflow>=3.18.0"]  # experiment tracking, used only by src/forecast/train.py
+mcp = ["mcp>=2.3.0"]  # the stdio MCP server for Claude Desktop (src/mcp_server.py)
+
+[tool.uv]
+default-groups = ["dev", "train", "mcp"]  # plain `uv sync` keeps installing everything locally
 
 [tool.ruff]
 line-length = 100

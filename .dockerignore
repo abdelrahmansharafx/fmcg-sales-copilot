@@ -1,0 +1,23 @@
+# Keep the build context tiny and make sure no secret or local artefact can enter an image.
+.git
+.github
+.venv
+.env
+.env.*
+**/__pycache__
+.pytest_cache
+.ruff_cache
+mlruns
+mlflow.db
+chroma_db
+models
+results
+notebooks
+evals
+tests
+guides
+data/*.db
+data/true_demand.csv.gz
+data/sample
+*.md
+!docs/*.md

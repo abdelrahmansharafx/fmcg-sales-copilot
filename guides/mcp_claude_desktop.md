@@ -44,7 +44,7 @@ Ask these in a new chat (Claude asks permission the first time it uses a tool: c
 | 2 | "What should outlet O010 order next week? Show the top 5 lines." | `recommend_order` | 186 units in total; Coca-Cola Zero 330ml can first (54) |
 | 3 | "Did promotion 2 on Coca-Cola Original 330ml can pay off?" | `promo_impact` | +35.4% uplift (95% CI 27.0% to 45.4%) |
 | 4 | "Can I run a 30% discount, and how far ahead must I request a promotion?" | `search_policies` | above 25% needs Commercial Director approval; request at least 3 weeks ahead |
-| 5 | "Which Alexandria outlet dropped the most in the last 4 weeks vs the 4 before?" | `query_sales` | Alexandria Cafe 115, about -34% (1,393 to 913 units) |
+| 5 | "Which Alexandria outlet had the largest percentage drop in units over the last 4 weeks vs the 4 before?" | `query_sales` | Alexandria Cafe 115, about -34% (1,393 to 913 units) |
 | 6 | "What was our market share versus Pepsi last quarter?" | none | it should say the data has no competitor information |
 
 Tip for a live demo: have the numbers above open in another window, and point out that the SQL,

@@ -1063,6 +1063,7 @@ wheels = [
 name = "fmcg-sales-copilot"
 version = "0.1.0"
 source = { virtual = "." }
+default-groups = ["dev", "mcp", "train"]
 dependencies = [
     { name = "chromadb" },
     { name = "fastapi" },
@@ -1070,8 +1071,6 @@ dependencies = [
     { name = "langchain-openai" },
     { name = "langgraph" },
     { name = "lightgbm" },
-    { name = "mcp" },
-    { name = "mlflow" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "openai" },
@@ -1089,6 +1088,12 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+mcp = [
+    { name = "mcp" },
+]
+train = [
+    { name = "mlflow" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1098,8 +1103,6 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=1.8.0" },
     { name = "langgraph", specifier = ">=1.2.22" },
     { name = "lightgbm", specifier = ">=4.7.0" },
-    { name = "mcp", specifier = ">=2.3.0" },
-    { name = "mlflow", specifier = ">=3.18.0" },
     { name = "numpy" },
     { name = "openai", specifier = ">=3.52.0" },
     { name = "pandas" },
@@ -1116,6 +1119,8 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+mcp = [{ name = "mcp", specifier = ">=2.3.0" }]
+train = [{ name = "mlflow", specifier = ">=3.18.0" }]
 
 [[package]]
 name = "fonttools"
